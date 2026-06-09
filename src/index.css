@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;600&display=swap');
+
+:root {
+  font-family: 'Noto Sans SC', sans-serif;
+  line-height: 1.6;
+  font-weight: 400;
+  color: #1a1a2e;
+  background-color: #f5f0e8;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #ede7d9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #5c3d2e;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #7a5644;
+}
+
+@layer components {
+  .ornament-bar {
+    height: 3px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      #c0392b 15%,
+      #5c3d2e 50%,
+      #c0392b 85%,
+      transparent 100%
+    );
+  }
+
+  .card-base {
+    @apply bg-parchment-light border border-sandalwood/20 rounded-lg shadow-sm;
+  }
+
+  .card-hover {
+    @apply hover:shadow-md hover:-translate-y-0.5 transition-all duration-200;
+  }
+
+  .btn-primary {
+    @apply bg-vermilion text-parchment-light px-4 py-2 rounded-md
+           hover:bg-vermilion-light active:bg-vermilion-dark
+           transition-colors duration-150 font-medium text-sm;
+  }
+
+  .btn-secondary {
+    @apply bg-ink text-parchment-light px-4 py-2 rounded-md
+           hover:bg-ink/90 active:bg-ink/80
+           transition-colors duration-150 font-medium text-sm;
+  }
+
+  .btn-ghost {
+    @apply text-sandalwood px-4 py-2 rounded-md
+           hover:bg-parchment-dark transition-colors duration-150
+           font-medium text-sm;
+  }
+
+  .input-base {
+    @apply bg-parchment border border-sandalwood/30 rounded-md px-3 py-2
+           text-sm text-ink placeholder:text-sandalwood/50
+           focus:outline-none focus:ring-2 focus:ring-vermilion/30 focus:border-vermilion
+           transition-all duration-150;
+  }
+
+  .timeline-line {
+    @apply absolute left-6 top-0 bottom-0 w-0.5 bg-sandalwood/30;
+  }
+
+  .timeline-dot {
+    @apply w-3 h-3 rounded-full bg-vermilion border-2 border-parchment-light
+           absolute left-[18px] -translate-x-1/2 z-10;
+  }
+
+  .tag-base {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium
+           cursor-pointer transition-all duration-150 border;
+  }
+
+  .tag-selected {
+    @apply bg-vermilion text-parchment-light border-vermilion;
+  }
+
+  .tag-unselected {
+    @apply bg-parchment text-sandalwood border-sandalwood/30
+           hover:border-vermilion hover:text-vermilion;
+  }
+}
