@@ -1,5 +1,55 @@
 import type { Segment } from '@/types';
 
+export function getOrderedProjectSegments(
+  segments: Segment[],
+  projectId: string | undefined
+): Segment[] {
+  if (!projectId) return [];
+  return segments
+    .filter((s) => s.projectId === projectId)
+    .sort((a, b) => a.order - b.order);
+}
+
+export interface VirtualTimelineEntry {
+  segmentIndex: number;
+  virtualStart: number;
+  virtualEnd: number;
+}
+
+export function buildVirtualTimeline(segments: Segment[]): VirtualTimelineEntry[] {
+  const sorted = [...segments].sort((a, b) => a.order - b.order);
+  const timeline: VirtualTimelineEntry[] = [];
+  let cursor = 0;
+
+  for (let i = 0; i < sorted.length; i++) {
+    const seg = sorted[i];
+    const duration = seg.endTime - seg.startTime;
+    const virtualStart = cursor;
+    const virtualEnd = cursor + duration + seg.pauseDuration;
+    timeline.push({ segmentIndex: i, virtualStart, virtualEnd });
+    cursor = virtualEnd;
+  }
+
+  return timeline;
+}
+
+export function getTotalVirtualDuration(timeline: VirtualTimelineEntry[]): number {
+  if (timeline.length === 0) return 0;
+  return timeline[timeline.length - 1].virtualEnd;
+}
+
+export function findActiveSegmentIndex(
+  timeline: VirtualTimelineEntry[],
+  virtualTime: number
+): number {
+  for (const entry of timeline) {
+    if (virtualTime >= entry.virtualStart && virtualTime < entry.virtualEnd) {
+      return entry.segmentIndex;
+    }
+  }
+  return -1;
+}
+
 export function findOverlappingSegments(segments: Segment[]): string[] {
   const sorted = [...segments].sort((a, b) => a.startTime - b.startTime);
   const overlappingIds = new Set<string>();

@@ -4,6 +4,7 @@ import { Music2, Pause, MessageSquare } from 'lucide-react';
 import { useProjectStore } from '@/store/useProjectStore';
 import { TONE_OPTIONS, ACCOMPANIMENT_OPTIONS } from '@/types';
 import type { ToneType, AccompanimentType } from '@/types';
+import { getOrderedProjectSegments } from '@/utils/timeline';
 import { cn } from '@/lib/utils';
 
 export default function Markup() {
@@ -12,10 +13,7 @@ export default function Markup() {
   const updateSegment = useProjectStore((s) => s.updateSegment);
 
   const projectSegments = useMemo(
-    () =>
-      segments
-        .filter((s) => s.projectId === projectId)
-        .sort((a, b) => a.order - b.order),
+    () => getOrderedProjectSegments(segments, projectId),
     [segments, projectId]
   );
 

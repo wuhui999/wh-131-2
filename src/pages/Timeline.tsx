@@ -2,7 +2,7 @@ import { useMemo, useState, useRef, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { Plus, Trash2, AlertTriangle, Clock, GripVertical } from 'lucide-react';
 import { useProjectStore } from '@/store/useProjectStore';
-import { findOverlappingSegments, formatTime, getTotalDuration } from '@/utils/timeline';
+import { findOverlappingSegments, formatTime, getTotalDuration, getOrderedProjectSegments } from '@/utils/timeline';
 import { cn } from '@/lib/utils';
 
 export default function Timeline() {
@@ -15,10 +15,7 @@ export default function Timeline() {
   const reorderSegments = useProjectStore((s) => s.reorderSegments);
 
   const projectSegments = useMemo(
-    () =>
-      segments
-        .filter((s) => s.projectId === projectId)
-        .sort((a, b) => a.order - b.order),
+    () => getOrderedProjectSegments(segments, projectId),
     [segments, projectId]
   );
 

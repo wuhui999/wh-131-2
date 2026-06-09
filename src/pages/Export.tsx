@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Download, FileJson, Printer } from 'lucide-react';
 import { useProjectStore } from '@/store/useProjectStore';
 import { exportToJSON, exportToHTML } from '@/utils/export';
+import { getOrderedProjectSegments } from '@/utils/timeline';
 
 export default function Export() {
   const { id: projectId } = useParams<{ id: string }>();
@@ -11,10 +12,7 @@ export default function Export() {
 
   const project = projects.find((p) => p.id === projectId);
   const projectSegments = useMemo(
-    () =>
-      segments
-        .filter((s) => s.projectId === projectId)
-        .sort((a, b) => a.order - b.order),
+    () => getOrderedProjectSegments(segments, projectId),
     [segments, projectId]
   );
 

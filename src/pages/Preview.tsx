@@ -2,60 +2,22 @@ import { useParams } from 'react-router-dom';
 import { useRef, useState, useCallback, useEffect, useMemo } from 'react';
 import { Play, Pause, RotateCcw, Gauge } from 'lucide-react';
 import { useProjectStore } from '@/store/useProjectStore';
-import { formatTime, getTotalDuration } from '@/utils/timeline';
+import {
+  formatTime,
+  getOrderedProjectSegments,
+  buildVirtualTimeline,
+  getTotalVirtualDuration,
+  findActiveSegmentIndex,
+} from '@/utils/timeline';
 import { SPEED_OPTIONS } from '@/types';
 import { cn } from '@/lib/utils';
-import type { Segment } from '@/types';
-
-interface VirtualTimelineEntry {
-  segmentIndex: number;
-  virtualStart: number;
-  virtualEnd: number;
-}
-
-function buildVirtualTimeline(segments: Segment[]): VirtualTimelineEntry[] {
-  const sorted = [...segments].sort((a, b) => a.order - b.order);
-  const timeline: VirtualTimelineEntry[] = [];
-  let cursor = 0;
-
-  for (let i = 0; i < sorted.length; i++) {
-    const seg = sorted[i];
-    const duration = seg.endTime - seg.startTime;
-    const virtualStart = cursor;
-    const virtualEnd = cursor + duration + seg.pauseDuration;
-    timeline.push({ segmentIndex: i, virtualStart, virtualEnd });
-    cursor = virtualEnd;
-  }
-
-  return timeline;
-}
-
-function getTotalVirtualDuration(timeline: VirtualTimelineEntry[]): number {
-  if (timeline.length === 0) return 0;
-  return timeline[timeline.length - 1].virtualEnd;
-}
-
-function findActiveSegmentIndex(
-  timeline: VirtualTimelineEntry[],
-  virtualTime: number
-): number {
-  for (const entry of timeline) {
-    if (virtualTime >= entry.virtualStart && virtualTime < entry.virtualEnd) {
-      return entry.segmentIndex;
-    }
-  }
-  return -1;
-}
 
 export default function Preview() {
   const { id: projectId } = useParams<{ id: string }>();
   const segments = useProjectStore((s) => s.segments);
 
   const sortedSegments = useMemo(
-    () =>
-      segments
-        .filter((s) => s.projectId === projectId)
-        .sort((a, b) => a.order - b.order),
+    () => getOrderedProjectSegments(segments, projectId),
     [segments, projectId]
   );
 
